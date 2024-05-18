@@ -1,0 +1,29 @@
+<div class="contenedor">
+    {{#if product}}
+        <div class="sticky">
+            <h1>{{product.title}}</h1>
+            <div class="line"></div>
+        </div>
+        <div class="productBox">
+            <div>
+                <img class="productImg" src="../../img/{{this.product.img}}" alt="">
+            </div>
+            <div class="productDatos">
+                <p>{{product.description}}</p>
+                <div>
+                    <div>
+                        <p>Stock: {{product.stock}}</p>
+                        <p>${{product.price}}.-</p>
+                    </div>
+                    <button class="btn">Comprar</button>
+                </div>
+            </div>
+        </div>
+
+    {{else}}
+        <div class="sticky">
+            <h1>El producto no existe</h1>
+            <div class="line"></div>
+        </div>
+    {{/if}}
+</div>

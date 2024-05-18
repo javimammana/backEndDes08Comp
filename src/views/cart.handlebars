@@ -1,0 +1,50 @@
+<div class="contenedor">
+    {{#if cartRender.products}}
+        <div class="sticky">
+            <h1>Productos en Carrito</h1>
+            <div class="line"></div>
+        </div>
+        <div class="contenedorCard">
+            {{#each cartRender.products}}
+                <div class="itemCart">
+                    <div class="itemCartInfo">
+                        <div>
+                            <img class="imgCart" src="../../img/{{this.product.img}}">
+                        </div>
+                        <div class="infoCard">
+                            <div class="detalleCard detalleAling">
+                                <h3>{{this.product.title}}</h3>
+                                <p>{{this.product.code}}</p>
+                            </div>
+                            <div class="">
+                                <div class="detalleCard cantAling">
+                                    <p>Cant: </p>
+                                    <button class="btnCant">-</button>
+                                    <p>{{this.quantity}}</p>
+                                    <button class="btnCant">+</button>
+                                </div>
+                            </div>
+                            <div class="detalleCard detalleAling">
+                                <h5>Precio por unidad: ${{this.product.price}}</h5>
+                                <p>$ {{ this.totalPrice }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="deleteOfCart">
+                        <button class="btn btnDel">Borrar</button>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+        <div class="deleteCart">
+            <button class="btn btnDel">Vaciar Carrito</button>
+        </div>
+
+    {{else}}
+        <div class="sticky">
+            <h2>El carrito esta vacio</h2>
+            <div class="line"></div>
+        </div>
+    {{/if}}
+
+</div>
