@@ -2,41 +2,42 @@ import { Router } from "express";
 import { ProductManager } from "../manager/ProductManager.js";
 import ChatManager from "../manager/ChatManager.js";
 import { CartManager } from "../manager/CartManager.js";
+import passport from "passport";
 
 const router = Router();
 const manager = new ProductManager();
 const managerCart = new CartManager();
 
-router.get("/", async (req, res) => {
+// router.get("/", async (req, res) => {
+//     try {
+
+//         if (!req.session.login) {
+//             return res.redirect("/login");
+//         }
+    
+//         const user = req.session.user
+
+//         const products = await manager.getProducts();
+//         console.log(products)
+//         res.render("home", {
+//             title: "Productos",
+//             fileCss: "style.css",
+//             products
+//         });
+//     } catch (error) {
+//         res.status(500).json({error: "Error del servicor"});
+//         console.log (error)
+//     }
+// });
+
+router.get("/products", passport.authenticate("jwt", {session: false, failureRedirect: "/login"}), async (req, res) => {
     try {
 
-        if (!req.session.login) {
+        if (!req.user) {
             return res.redirect("/login");
         }
     
-        const user = req.session.user
-
-        const products = await manager.getProducts();
-        console.log(products)
-        res.render("home", {
-            title: "Productos",
-            fileCss: "style.css",
-            products
-        });
-    } catch (error) {
-        res.status(500).json({error: "Error del servicor"});
-        console.log (error)
-    }
-});
-
-router.get("/products", async (req, res) => {
-    try {
-
-        if (!req.session.login) {
-            return res.redirect("/login");
-        }
-    
-        const user = req.session.user
+        const user = req.user
 
         const { query, page, limit, sort } = req.query;
         const products = await manager.getProductsPaginate(limit, page, query, sort);
@@ -76,13 +77,13 @@ router.get("/products", async (req, res) => {
     }
 });
 
-router.get ("/product/:pid", async(req, res) => {
+router.get ("/product/:pid", passport.authenticate("jwt", {session: false, failureRedirect: "/login"}), async(req, res) => {
     try {
-        if (!req.session.login) {
+        if (!req.user) {
             return res.redirect("/login");
         }
     
-        const user = req.session.user
+        const user = req.user;
 
         const {pid} = req.params;
         const producto = await manager.getProductById(pid);
@@ -103,15 +104,15 @@ router.get ("/product/:pid", async(req, res) => {
     }
 })
 
-router.get("/carts", async (req, res) => {
+router.get("/carts", passport.authenticate("jwt", {session: false, failureRedirect: "/login"}), async (req, res) => {
 
     try {
 
-        if (!req.session.login) {
+        if (!req.user) {
             return res.redirect("/login");
         }
 
-        const user = req.session.user;
+        const user = req.user;
 
         // const cid = user.cart;
 
@@ -146,12 +147,13 @@ router.get("/carts", async (req, res) => {
     }
 })
 
-router.get("/realtimeproducts", (req, res) => {
+router.get("/realtimeproducts", passport.authenticate("jwt", {session: false, failureRedirect: "/login"}), (req, res) => {
     try {
-        if (!req.session.login) {
-            return res.redirect("/login");
+        console.log(req.user)
+        if (req.user.role != "ADMIN") {
+            return res.status(403).send("Sin permiso para esta area");
         }
-        const user = req.session.user
+        const user = req.user
 
         res.render("realTimeProducts", {
             title: "Manager de productos",
@@ -164,13 +166,13 @@ router.get("/realtimeproducts", (req, res) => {
 })
 
 //CHAT//
-router.get ("/messages", async (req, res) => {
+router.get ("/messages", passport.authenticate("jwt", {session: false, failureRedirect: "/login"}), async (req, res) => {
     try {
 
-        if (!req.session.login) {
+        if (!req.user) {
             return res.redirect("/login");
         }
-        const user = req.session.user
+        const user = req.user;
         
         const chats = await ChatManager.getAllMessages();
         // console.log(chats);
@@ -202,14 +204,13 @@ router.get("/register", (req, res) => {
     })
 })
 
-router.get("/profile", (req, res) => {
-    if (!req.session.login) {
-        return res.redirect("/login");
-    }
+router.get("/profile", passport.authenticate("jwt", {session: false, failureRedirect: "/login"}), (req, res) => {
 
-    const user = req.session.user
+    const user = req.user
+
+    console.log(user)
     res.render("profile", {
-        title: `Perfil de ${req.session.user.first_name}`,
+        title: `Perfil de ${req.user.first_name}`,
         fileCss: "style.css",
         user
     })

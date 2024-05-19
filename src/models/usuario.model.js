@@ -38,8 +38,9 @@ const schema = new mongoose.Schema({
     favorite: {type: Array, default: []},
 
     chatid: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "messages"
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: "messages"
+        type: String
     },
 
     login: {
